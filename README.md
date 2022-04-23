@@ -136,7 +136,3 @@ else if ((*deleted).right == NULL) // this part delete nodes with one child at t
  		deletedParent = (*deleted).parent;
  	}//
 ```
-
-
-### Tree visualizer
-![[bst_1650564337014.png]]
