@@ -9,186 +9,112 @@ It doesn't handle duplicates for the moment
 void delete (struct node* deleted, int value)
 
 {
-
  	if(root != NULL)
-
  	{	
-
  		if (value >= 0 && deleted == NULL)
-
  		{
-
  			deleted = binarySearch(value, root);
-
  			if (deleted == NULL)
-
  				return;
-
  		}
 
-  
-
- 	struct node* deletedParent = (*deleted).parent;
+ 		struct node* deletedParent = (*deleted).parent;
 	
- 	if ((*deleted).right == NULL && (*deleted).left == NULL) // this part delete nodes without children
-
- 	{
-
- 		if (deletedParent == NULL) { root = NULL; }
-
- 		else
+ 		if ((*deleted).right == NULL && (*deleted).left == NULL) // this part delete nodes without children
 
  		{
 
- 			if ((*deletedParent).left == deleted)
-
- 				(*deletedParent).left = NULL;
-
+ 			if (deletedParent == NULL) { root = NULL; }
  			else
 
- 			(*deletedParent).right = NULL;
+ 			{
 
- 		}
+ 				if ((*deletedParent).left == deleted)
+ 					(*deletedParent).left = NULL;
 
- 		free(deleted);
+ 				else
+ 					(*deletedParent).right = NULL;
+ 			}
 
- 		return;
+ 			free(deleted);
+ 			return;
+ 		}//
 
- 	}//
+ 		else if ((*deleted).right == NULL) // this part delete nodes with one child at the left
+		{
+ 			struct node* ptr = (*deleted).left;
+ 			(*deleted).data = (*ptr).data;
+ 			delete(ptr, -1);
+ 			deletedParent = (*deleted).parent;
+ 		}//
 
- 	else if ((*deleted).right == NULL) // this part delete nodes with one child at the left
-
-	{
-
- 		struct node* ptr = (*deleted).left;
-
- 		(*deleted).data = (*ptr).data;
-
- 		delete(ptr, -1);
-
- 		deletedParent = (*deleted).parent;
-
- 	}//
-
- 	else if ((*deleted).left == NULL) // this part delete nodes with one child at the right
-
- 	{
-
- 		struct node* ptr = (*deleted).right;
-
-		(*deleted).data = (*ptr).data;
-
- 		delete(ptr, -1);
-
- 		deletedParent = (*deleted).parent;
-
- 	}//
-
- 	else if ((*deleted).right != NULL && (*deleted).left != NULL) // this part delete node with two children
-
- 	{
-
- 	struct node* ptr = (*deleted).right;
-
- 	struct node* ptrParent;
-
-  
-
- 	if ((*ptr).left == NULL) {
-
-		swapData(&(*ptr).data, &(*deleted).data);
-
- 		delete(ptr, -1);//
-
- 		deletedParent = (*deleted).parent;
-
- 	}
-
-	 else
-
-	 {
-
-	 	// this loop take the value of deleted and brings it down the tree
-
-	 	//then deletes the last node containing this value 
-
-		while ((*ptr).right != NULL || (*ptr).left != NULL)
-
+ 		else if ((*deleted).left == NULL) // this part delete nodes with one child at the right
  		{
+ 			struct node* ptr = (*deleted).right;
+			(*deleted).data = (*ptr).data;
+ 			delete(ptr, -1);
+ 			deletedParent = (*deleted).parent;
+ 		}//
 
- 			ptrParent = (*ptr).parent;
+ 		else if ((*deleted).right != NULL && (*deleted).left != NULL) // this part delete node with two children
+ 		{
+ 			struct node* ptr = (*deleted).right;
+ 			struct node* ptrParent;
 
- 			swapData(&(*ptrParent).data, &(*ptr).data);
+ 			if ((*ptr).left == NULL) {
+				swapData(&(*ptr).data, &(*deleted).data);
+ 				delete(ptr, -1);//
+ 				deletedParent = (*deleted).parent;
+	 		}
 
- 			if ((*ptr).left == NULL && (*ptr).right != NULL)
+	 		else
+	 		{
+	 			// this loop take the value of deleted and brings it down the tree
+	 			//then deletes the last node containing this value 
+				while ((*ptr).right != NULL || (*ptr).left != NULL)
+		 		{
+ 					ptrParent = (*ptr).parent;
+ 					swapData(&(*ptrParent).data, &(*ptr).data);
+ 					if ((*ptr).left == NULL && (*ptr).right != NULL)
+ 						ptr = (*ptr).right;
+ 					else if ((*ptr).left != NULL && (*ptr).right == NULL || (*ptr).left != NULL && (*ptr).right != NULL)
+ 						ptr = (*ptr).left;
+ 				}
 
- 				ptr = (*ptr).right;
+ 				ptrParent = (*ptr).parent;
+ 				swapData(&(*ptrParent).data, &(*ptr).data);
+ 				delete(ptr, -1);//
 
- 			else if ((*ptr).left != NULL && (*ptr).right == NULL || (*ptr).left != NULL && (*ptr).right != NULL)
-
- 				ptr = (*ptr).left;
-
- 		}
-
- 		ptrParent = (*ptr).parent;
-
- 		swapData(&(*ptrParent).data, &(*ptr).data);
-
- 		delete(ptr, -1);//
-
- 		// this part take the value down to the tree and brings it up
-
- 		do {
-
- 			ptr = ptrParent;
-
- 			ptrParent = (*ptrParent).parent;
-
- 			swapData(&(*ptrParent).data, &(*ptr).data);
-
- 		} while (ptrParent != deleted);//
-
- 	}
-
- } //
+ 				// this part take the value down to the tree and brings it up
+ 				do {
+ 				ptr = ptrParent;
+ 				ptrParent = (*ptrParent).parent;
+ 				swapData(&(*ptrParent).data, &(*ptr).data);	
+ 				} while (ptrParent != deleted);//
+ 			}
+ 	} //
 
  	checkForReinsertion(deletedParent, deleted);
-
  }
-
  	else
-
  		printf("no, you can't delete\n");
-
 }
 ```
 
 - The delete function wastes the stack, when deleting a node with no children it's pushing the whole function in the stack just for this piece of code 
 ```c
 if ((*deleted).right == NULL && (*deleted).left == NULL) // this part delete nodes without children
-
  	{
-
  		if (deletedParent == NULL) { root = NULL; }
-
  		else
-
  		{
-
  			if ((*deletedParent).left == deleted)
-
  				(*deletedParent).left = NULL;
-
  			else
-
  			(*deletedParent).right = NULL;
-
  		}
-
  		free(deleted);
-
  		return;
-
  	}//
 ```
 
@@ -196,31 +122,18 @@ if ((*deleted).right == NULL && (*deleted).left == NULL) // this part delete nod
 - I should probably separate the function 
 ```c
 else if ((*deleted).right == NULL) // this part delete nodes with one child at the left
-
 	{
-
  		struct node* ptr = (*deleted).left;
-
  		(*deleted).data = (*ptr).data;
-
  		delete(ptr, -1);
-
  		deletedParent = (*deleted).parent;
-
  	}//
-
  	else if ((*deleted).left == NULL) // this part delete nodes with one child at the right
-
  	{
-
  		struct node* ptr = (*deleted).right;
-
 		(*deleted).data = (*ptr).data;
-
  		delete(ptr, -1);
-
  		deletedParent = (*deleted).parent;
-
  	}//
 ```
 
