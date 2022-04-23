@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "bit": "c",
+        "initializer_list": "c",
+        "iterator": "c",
+        "memory": "c",
+        "system_error": "c",
+        "type_traits": "c",
+        "typeinfo": "c",
+        "utility": "c",
+        "xlocale": "c",
+        "xlocinfo": "c",
+        "xlocnum": "c",
+        "xmemory": "c",
+        "xstring": "c",
+        "xutility": "c"
+    }
+}
