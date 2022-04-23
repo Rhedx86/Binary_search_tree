@@ -1,6 +1,8 @@
 > With this project I now understand the pain of having lots of bugs in the code.
 I've done my best to remove the most bugs I could find I don't know if there stil are, tell me if you ever find some bugs and let me take care of it.
 
+It doesn't handle duplicates for the moment
+
 
 ### Delete function 
 ```c
